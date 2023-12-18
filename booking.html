@@ -28,7 +28,7 @@
 <body>
     <div class="main">
         <h2>Booking Appointment App</h2><br>
-        <form>
+        <form class="form">
             <label for="name" class="form-label">Name</label>
             <input type="text" name="name" id="name"><br>
             <label for="email" class="form-label">Email</label>
@@ -36,25 +36,23 @@
             <div class="d-grid gap-2 d-md-block">
                 <button class="btn btn-dark" type="submit">Submit</button>
             </div>
-            <!-- <li class=""></li> -->
+            <br>
+            <div class="display"></div>
         </form>
     </div>
 </body>
 <script>
-    let user = {
 
-    }
+    let form = document.querySelector(".form")
+    let display = document.querySelector(".display")
 
-    localStorage.setItem("name", JSON.stringify(user))
-
-    let form = document.querySelector("form")
     form.addEventListener("submit", (e) => {
 
         e.preventDefault()
-        let uname = document.getElementById("name").value
+        let name = document.getElementById("name").value
         let email = document.getElementById("email").value
 
-        var userData = JSON.parse(localStorage.getItem("userDetails")) ?? [];
+        let userData = JSON.parse(localStorage.getItem("userDetails")) ?? [];
 
         userData.push({
             'name': name,
@@ -62,9 +60,25 @@
         })
 
         localStorage.setItem("userDetails", JSON.stringify(userData))
-
-
+        displayOnScreen();
     })
+
+    let displayOnScreen = () => {
+        var userDetails = JSON.parse(localStorage.getItem("userDetails")) ?? []
+
+        let displaydata = "";
+
+        userDetails.forEach((element, i) => {
+            displaydata += `<li>${element.name} , ${element.email} </li>`
+        });
+
+        display.innerHTML = displaydata
+    }
+
+    displayOnScreen();
+
+
+
 </script>
 
 </html>
