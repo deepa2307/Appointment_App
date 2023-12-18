@@ -13,16 +13,13 @@
     <style>
         .main {
             width: 70%;
-            /* Set the width as a percentage of the parent container */
             max-width: 400px;
-            /* Set a maximum width to avoid excessive stretching on larger screens */
             margin: 0 auto;
             padding: 20px;
             border: 1px solid black;
             box-sizing: border-box;
         }
     </style>
-
 </head>
 
 <body>
@@ -40,45 +37,68 @@
             <div class="display"></div>
         </form>
     </div>
-</body>
-<script>
 
-    let form = document.querySelector(".form")
-    let display = document.querySelector(".display")
+    <script>
+        let form = document.querySelector(".form");
+        let display = document.querySelector(".display");
+        let editIndex = null;
 
-    form.addEventListener("submit", (e) => {
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
 
-        e.preventDefault()
-        let name = document.getElementById("name").value
-        let email = document.getElementById("email").value
+            let name = document.getElementById("name").value;
+            let email = document.getElementById("email").value;
 
-        let userData = JSON.parse(localStorage.getItem("userDetails")) ?? [];
+            let userData = JSON.parse(localStorage.getItem("userDetails")) || [];
 
-        userData.push({
-            'name': name,
-            'email': email
-        })
+            if (editIndex === null) {
+                userData.push({ 'name': name, 'email': email });
+            } else {
 
-        localStorage.setItem("userDetails", JSON.stringify(userData))
-        displayOnScreen();
-    })
+                userData[editIndex].name = name;
+                userData[editIndex].email = email;
 
-    let displayOnScreen = () => {
-        var userDetails = JSON.parse(localStorage.getItem("userDetails")) ?? []
+                editIndex = null;
+            }
 
-        let displaydata = "";
-
-        userDetails.forEach((element, i) => {
-            displaydata += `<li>${element.name} , ${element.email} </li>`
+            localStorage.setItem("userDetails", JSON.stringify(userData));
+            displayOnScreen();
+            form.reset();
         });
 
-        display.innerHTML = displaydata
-    }
+        let displayOnScreen = () => {
+            var userDetails = JSON.parse(localStorage.getItem("userDetails")) || [];
 
-    displayOnScreen();
+            let displaydata = "";
 
+            userDetails.forEach((element, i) => {
+                displaydata += `<li>${element.name} , ${element.email} <button type="button" class="btn btn-outline-dark btn-sm" onclick="editUser(${i})">Edit</button> <button type="button" class="btn btn-outline-dark btn-sm" onclick="deleteUser(${i})">Delete</button> </li>`;
+            });
 
+            display.innerHTML = displaydata;
+        };
 
-</script>
+        let deleteUser = (index) => {
+            var userDetails = JSON.parse(localStorage.getItem("userDetails")) || [];
+            userDetails.splice(index, 1);
+            localStorage.setItem("userDetails", JSON.stringify(userDetails));
+            displayOnScreen();
+        };
+
+        let editUser = (index) => {
+
+            let userDetails = JSON.parse(localStorage.getItem("userDetails")) || [];
+
+            document.getElementById("name").value = userDetails[index].name;
+            document.getElementById("email").value = userDetails[index].email;
+
+            editIndex = index;
+            deleteUser(index);
+        };
+
+        displayOnScreen();
+    </script>
+
+</body>
 
 </html>
